@@ -1,0 +1,5 @@
+template: Hello, %s!
+defaultName: Stranger
+mongoHost: localhost
+mongoPort: 27017
+mongoDb: foo
