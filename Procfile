@@ -1,1 +1,1 @@
-web:	java $JAVA_OPTS -jar target/droptest-0.0.1-SNAPSHOT.jar server droptest.yml
+web:	java $JAVA_OPTS -Ddw.server.connector.port=$PORT -jar target/droptest-0.0.1-SNAPSHOT.jar server droptest.yml
