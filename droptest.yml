@@ -3,3 +3,7 @@ defaultName: Stranger
 mongoHost: localhost
 mongoPort: 27017
 mongoDb: foo
+
+server:
+  type: simple
+  applicationContextPath: /v1
