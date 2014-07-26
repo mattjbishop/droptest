@@ -13,7 +13,7 @@ public class MongoHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        mongoClient.getDatabaseNames();
+        mongoClient.getConnectPoint();
         return Result.healthy();
     }
 	

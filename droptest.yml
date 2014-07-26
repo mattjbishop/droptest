@@ -1,8 +1,6 @@
 template: Hello, %s!
 defaultName: Stranger
-mongoHost: localhost
-mongoPort: 27017
-mongoDb: foo
+mongoUri: mongodb://localhost:27017/foo
 
 server:
   type: simple

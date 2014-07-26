@@ -6,6 +6,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.mongojack.JacksonDBCollection;
 import com.mattjbishop.droptest.resources.DropTestResource;
 import com.mattjbishop.droptest.resources.PeopleResource;
@@ -44,8 +45,10 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		        new TemplateHealthCheck(configuration.getTemplate());
 		
 		// db setup
-		MongoClient mongo = new MongoClient(configuration.getMongoHost(), configuration.getMongoPort());
-		DB db = mongo.getDB(configuration.getMongoDb());
+		MongoClientURI uri = new MongoClientURI(configuration.getMongoUri());
+		MongoClient mongo = new MongoClient(uri);
+		DB db = mongo.getDB(uri.getDatabase());
+		
 		JacksonDBCollection<Person, String> people = 
 			JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);	
 			

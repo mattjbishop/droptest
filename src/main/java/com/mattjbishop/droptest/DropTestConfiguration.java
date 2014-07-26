@@ -15,14 +15,7 @@ public class DropTestConfiguration extends Configuration {
     private String defaultName = "Stranger";
 	
 	@NotEmpty
-	private String mongoHost = "localhost";
-	
-    @Min(1)
-    @Max(65535)
-    private int mongoPort = 27017;
-
-    @NotEmpty
-    private String mongoDb = "yourdb";
+	private String mongoUri = "localhost:27017/yourdb";
 
     @JsonProperty
     public String getTemplate() {
@@ -45,32 +38,12 @@ public class DropTestConfiguration extends Configuration {
     }
 	
     @JsonProperty
-    public String getMongoHost() {
-        return mongoHost;
+    public String getMongoUri() {
+        return mongoUri;
     }
 
     @JsonProperty
-    public void setMongoHost(String mongoHost) {
-        this.mongoHost = mongoHost;
-    }
-	
-    @JsonProperty
-    public int getMongoPort() {
-        return mongoPort;
-    }
-
-    @JsonProperty
-    public void setMongoPort(int mongoPort) {
-        this.mongoPort = mongoPort;
-    }
-	
-    @JsonProperty
-    public String getMongoDb() {
-        return mongoDb;
-    }
-
-    @JsonProperty
-    public void setMongoDb(String mongoDb) {
-        this.mongoDb = mongoDb;
+    public void setMongoUri(String mongoUri) {
+        this.mongoUri = mongoUri;
     }
 }
