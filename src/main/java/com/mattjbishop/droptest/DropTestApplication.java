@@ -2,6 +2,7 @@ package com.mattjbishop.droptest;
 
 import java.net.UnknownHostException;
 import io.dropwizard.Application;
+import io.dropwizard.views.ViewBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import com.mongodb.DB;
@@ -28,7 +29,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 
     @Override
     public void initialize(Bootstrap<DropTestConfiguration> bootstrap) {
-        // nothing to do yet
+        bootstrap.addBundle(new ViewBundle());
     }
 
 	// !!! need to understand how Dropwizard handles exceptions... throws Exception is a blunt tool...

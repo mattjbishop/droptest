@@ -1,6 +1,7 @@
 package com.mattjbishop.droptest.resources;
 
 import com.mattjbishop.droptest.core.Person;
+import com.mattjbishop.droptest.views.PersonView;
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
 import org.mongojack.JacksonDBCollection;
@@ -35,6 +36,15 @@ public class PersonResource {
 		DBCursor<Person> cursor = people.find(DBQuery.is("name", personId));
 		// need to handle the case that the person is not found		
 		return cursor.next();
+    }
+
+    @GET
+    @Path("/m")
+    @Produces(MediaType.TEXT_HTML)
+    public PersonView getPersonViewMustache(@PathParam("personId") String personId) {
+        DBCursor<Person> cursor = people.find(DBQuery.is("name", personId));
+        // need to handle the case that the person is not found
+        return new PersonView(cursor.next());
     }
 	
 }
