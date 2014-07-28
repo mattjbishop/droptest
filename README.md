@@ -12,6 +12,8 @@ It uses the following:
 * mongodb
 * maven
 
+The project includes a ProcFile so that you can run the service using [foreman](https://github.com/ddollar/foreman).
+
 ##To Do:
 
 There are a number of things still to do:
@@ -22,4 +24,4 @@ There are a number of things still to do:
 * API key
 * Authentication and Authorisation
 * unit testing and mockito
-* searching on Mongo
+* searching & SOUNDEX on Mongo
