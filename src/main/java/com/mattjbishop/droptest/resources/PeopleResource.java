@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 @Path("/people")
@@ -41,8 +42,14 @@ public class PeopleResource {
         // db.articles.find( { $text: { $search: "\"coffee cake\"" } } )
 
         if (query != null) {
-            BasicDBObject search = new BasicDBObject("$search", query);
-            BasicDBObject textSearch = new BasicDBObject("$text", search);
+             // unfortunately MongoHQ doesn't enable text search on basic plans!
+
+//            BasicDBObject search = new BasicDBObject("$search", query);
+//            BasicDBObject textSearch = new BasicDBObject("$text", search);
+//            dbCursor = people.find(textSearch);
+
+            Pattern pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+            BasicDBObject textSearch = new BasicDBObject("name", pattern);
             dbCursor = people.find(textSearch);
         }
         else {
