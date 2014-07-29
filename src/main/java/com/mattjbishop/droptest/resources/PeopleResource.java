@@ -3,6 +3,8 @@ package com.mattjbishop.droptest.resources;
 import com.mattjbishop.droptest.core.Person;
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBCursor;
@@ -16,6 +18,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Path("/people")
@@ -27,11 +31,30 @@ public class PeopleResource {
 	public PeopleResource(JacksonDBCollection<Person, String> people) {
 		this.people = people;
 	}
-	
-	@GET
+
+    @GET
     @Timed
-    public Person getPerson(@QueryParam("name") Optional<String> name) {
-    	return new Person();
+    public List<Person> listPeople(@QueryParam("q") String query) {
+        DBCursor<Person> dbCursor;
+        List<Person> response = new ArrayList<>();
+
+        // db.articles.find( { $text: { $search: "\"coffee cake\"" } } )
+
+        if (query != null) {
+            BasicDBObject search = new BasicDBObject("$search", query);
+            BasicDBObject textSearch = new BasicDBObject("$text", search);
+            dbCursor = people.find(textSearch);
+        }
+        else {
+            dbCursor = people.find();
+        }
+
+        while (dbCursor.hasNext()) {
+            Person person = dbCursor.next();
+            response.add(person);
+        }
+
+        return response; // this response probably needs to be a composite API object that gives some metadata too
     }
 	
 	@POST
@@ -46,6 +69,8 @@ public class PeopleResource {
 
 	    return Response.noContent().build();
 	}
+
+
 
 
 }

@@ -19,9 +19,7 @@ The project includes a ProcFile so that you can run the service using [foreman](
 There are a number of things still to do:
 
 * nice errors and error pages
-* listing people on /people
-* DAO pattern for DB access - using injection if possible
 * API key
 * Authentication and Authorisation
 * unit testing and mockito
-* searching & SOUNDEX on Mongo
+* soundex searching
