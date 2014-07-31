@@ -4,6 +4,7 @@
 A small project to test Dropwizard and MongoDB.
 
 It uses the following:
+
 * dropwizard
 * dropwizard-views
 * mustache.java
@@ -11,6 +12,7 @@ It uses the following:
 * mongodb java driver
 * mongodb
 * maven
+* spock (with groovy)
 
 The project includes a ProcFile so that you can run the service using [foreman](https://github.com/ddollar/foreman).
 
@@ -23,3 +25,9 @@ There are a number of things still to do:
 * Authentication and Authorisation
 * unit testing and mockito
 * soundex searching
+
+##Also Used:
+
+* idea-spock-enhancements (Intellij plugin)
+
+
