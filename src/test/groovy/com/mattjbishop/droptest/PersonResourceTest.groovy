@@ -1,6 +1,8 @@
 package com.mattjbishop.droptest
 
 import com.mattjbishop.droptest.core.Person
+import com.mattjbishop.droptest.core.Status
+import com.mattjbishop.droptest.api.PersonStatus
 import com.mattjbishop.droptest.resources.PersonResource
 import com.mongodb.MongoClient
 import org.mongojack.JacksonDBCollection
@@ -23,16 +25,19 @@ class PersonResourceTest extends Specification {
 
     def "should give me an existing user"() {
         given:
+        // this needs to work off of the yml/config
         def mongoClient = new MongoClient()
         def database = mongoClient.getDB("foo")
         def people = JacksonDBCollection.wrap(database.getCollection("person"), Person.class, String.class);
-        def person = new PersonResource(people)
+        def statuses = JacksonDBCollection.wrap(database.getCollection("status"), Status.class, String.class);
+        def personResource = new PersonResource(people, statuses)
 
         when:
-        def matt = person.getPerson("matt")
+        def matt = personResource.getPerson("matt")
 
         then:
-        matt.fullName == "matt"
+        matt.getPerson().fullName == "matt"
+
 
         cleanup:
         mongoClient.close()
@@ -43,10 +48,11 @@ class PersonResourceTest extends Specification {
         def mongoClient = new MongoClient()
         def database = mongoClient.getDB("foo")
         def people = JacksonDBCollection.wrap(database.getCollection("person"), Person.class, String.class);
-        def person = new PersonResource(people)
+        def statuses = JacksonDBCollection.wrap(database.getCollection("status"), Status.class, String.class);
+        def personResource = new PersonResource(people, statuses)
 
         when:
-        person.getPerson("this person does not exist")
+        personResource.getPerson("this person does not exist")
 
         then:
         def e = thrown(WebApplicationException)

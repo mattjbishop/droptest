@@ -1,9 +1,14 @@
 package com.mattjbishop.droptest.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.Length;
 import org.mongojack.ObjectId;
 
+/**
+ * Created by Matt.
+ * Ignoring properties while moving to status resource
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Person {	
 	private String id;
 
@@ -12,20 +17,13 @@ public class Person {
 	private String dateOfBirth;
 	
 	private String gender;
-	
-	private Boolean wantedMissing;
-	
-	private Boolean disqualifiedDriver;
-	
-	private Boolean impendingProsecution;
-	
+
 	private String pncId;
 	
 	private String croNumber;
 	
 	private String driverNumber;
-	
-		
+
     @ObjectId
     @JsonProperty("_id")
     public String getId() {
@@ -66,36 +64,6 @@ public class Person {
     @JsonProperty("gender")
     public void setGender(String gender) {
     	this.gender = gender;
-    }
-	
-    @JsonProperty("wantedMissing")
-    public Boolean getWantedMissing() {
-    	return wantedMissing;
-    }
-    
-    @JsonProperty("wantedMissing")
-    public void setWantedMissing(Boolean wm) {
-    	this.wantedMissing = wm;
-    }
-	
-    @JsonProperty("disqualifiedDriver")
-    public Boolean getDisqualifiedDriver() {
-    	return disqualifiedDriver;
-    }
-    
-    @JsonProperty("disqualifiedDriver")
-    public void setDisqualifiedDriver(Boolean dd) {
-    	this.disqualifiedDriver = dd;
-    }
-	
-    @JsonProperty("impendingProsecution")
-    public Boolean getImpendingProsecution() {
-    	return impendingProsecution;
-    }
-    
-    @JsonProperty("impendingProsecution")
-    public void setImpendingProsecution(Boolean ip) {
-    	this.impendingProsecution = ip;
     }
 	
     @JsonProperty("pncId")

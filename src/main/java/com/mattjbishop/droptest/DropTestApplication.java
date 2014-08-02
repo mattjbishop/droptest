@@ -1,6 +1,8 @@
 package com.mattjbishop.droptest;
 
 import java.net.UnknownHostException;
+
+import com.mattjbishop.droptest.core.Status;
 import io.dropwizard.Application;
 import io.dropwizard.views.ViewBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -30,6 +32,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
     @Override
     public void initialize(Bootstrap<DropTestConfiguration> bootstrap) {
         bootstrap.addBundle(new ViewBundle());
+        // bootstrap.addBundle(new AssetsBundle("/app/", "/"));  // !!! need to add in the angular app //
     }
 
 	// !!! need to understand how Dropwizard handles exceptions... throws Exception is a blunt tool...
@@ -51,12 +54,15 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		DB db = mongo.getDB(uri.getDatabase());
 		
 		JacksonDBCollection<Person, String> people = 
-			JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);	
+			JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);
+
+        JacksonDBCollection<Status, String> statuses =
+                JacksonDBCollection.wrap(db.getCollection("status"), Status.class, String.class);
 			
 		MongoManaged mongoManaged = new MongoManaged(mongo);
 
 		final PeopleResource peopleResource = new PeopleResource(people);
-		final PersonResource personResource = new PersonResource(people);		
+		final PersonResource personResource = new PersonResource(people, statuses);
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);
