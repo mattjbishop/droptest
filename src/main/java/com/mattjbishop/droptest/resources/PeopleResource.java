@@ -4,6 +4,7 @@ import com.mattjbishop.droptest.core.Person;
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBObject;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.DBQuery;
@@ -29,8 +30,8 @@ public class PeopleResource {
     
 	private JacksonDBCollection<Person, String> people;
 		
-	public PeopleResource(JacksonDBCollection<Person, String> people) {
-		this.people = people;
+	public PeopleResource(DB db) {
+		this.people = JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);
 	}
 
     @GET

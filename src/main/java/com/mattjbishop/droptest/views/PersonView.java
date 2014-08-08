@@ -1,7 +1,8 @@
 package com.mattjbishop.droptest.views;
 
-import io.dropwizard.views.View;
+import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
+import io.dropwizard.views.View;
 
 /**
  * Created by matt on 27/07/2014.
@@ -9,9 +10,9 @@ import com.mattjbishop.droptest.core.Person;
 public class PersonView extends View {
     private final Person person;
 
-    public PersonView(Person person) {
+    public PersonView(PersonRepresentation person) {
         super("mustache/person.mustache");
-        this.person = person;
+        this.person = person.getPerson();
     }
 
     public Person getPerson() {

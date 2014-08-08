@@ -2,7 +2,6 @@ package com.mattjbishop.droptest
 
 import com.mattjbishop.droptest.core.Person
 import com.mattjbishop.droptest.core.Status
-import com.mattjbishop.droptest.api.PersonStatus
 import com.mattjbishop.droptest.resources.PersonResource
 import com.mongodb.MongoClient
 import org.mongojack.JacksonDBCollection

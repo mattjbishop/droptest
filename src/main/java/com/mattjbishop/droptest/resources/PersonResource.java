@@ -1,28 +1,26 @@
 package com.mattjbishop.droptest.resources;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
-import com.mattjbishop.droptest.api.PersonStatus;
 import com.mattjbishop.droptest.core.Status;
+import com.mattjbishop.droptest.hal.HALFactory;
+import com.mattjbishop.droptest.hal.HALRepresentation;
+import com.mattjbishop.droptest.hal.Views;
 import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mattjbishop.droptest.views.PersonView;
-import com.mattjbishop.droptest.views.PersonStatusView;
-import com.mattjbishop.droptest.utils.ResourceHelper.*;
-import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
+import com.mongodb.DB;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBCursor;
 
-import javax.validation.Valid;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.StatusType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,31 +30,34 @@ public class PersonResource {
 	
 	private JacksonDBCollection<Person, String> people;
     private JacksonDBCollection<Status, String> statuses;
-	
-	public PersonResource(JacksonDBCollection<Person, String> people,
-                          JacksonDBCollection<Status, String> statuses) {
-		this.people = people;
-        this.statuses = statuses;
-	}
+
+    public PersonResource(DB db)
+    {
+        this.people = JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);
+        this.statuses = JacksonDBCollection.wrap(db.getCollection("status"), Status.class, String.class);
+    }
 	
 	@GET
     @Timed
-	public PersonStatus getPerson(@PathParam("personId") String personId) {
+    @JsonView(Views.HAL.class)
+	public Response getPerson(@PathParam("personId") String personId) {
 
-        // replace the ids with HATEOAS links??
-        return findPerson(personId);
+        PersonRepresentation person = findPerson(personId);
+        HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person);
+
+        return Response.ok(representation).build();
     }
 
     @GET
     @Path("/m")
     @Produces(MediaType.TEXT_HTML)
     @Timed
-    public PersonStatusView getPersonStatusViewMustache(@PathParam("personId") String personId) {
-        PersonStatus person = findPerson(personId);
-        return new PersonStatusView(person);
+    public PersonView getPersonStatusViewMustache(@PathParam("personId") String personId) {
+        PersonRepresentation person = findPerson(personId);
+        return new PersonView(person);
     }
 
-    private PersonStatus findPerson(String personId) {
+    private PersonRepresentation findPerson(String personId) {
         List<Status> personStatuses = new ArrayList<>();
         DBCursor<Person> pCursor = people.find(DBQuery.is("name", personId));
         ResourceHelper.notFoundIfNull(pCursor);
@@ -70,6 +71,6 @@ public class PersonResource {
                 personStatuses.add(sCursor.next());
             }
         }
-        return new PersonStatus(pCursor.next(), personStatuses);
+        return new PersonRepresentation(pCursor.next(), personStatuses);
     }
 }

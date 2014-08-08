@@ -1,9 +1,12 @@
 package com.mattjbishop.droptest.utils;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.mattjbishop.droptest.hal.HALRepresentation;
 import org.mongojack.DBCursor;
+
 
 /**
  * Created by matt on 28/07/2014.
@@ -32,5 +35,9 @@ public class ResourceHelper {
         if (obj == null) {
             throw new WebApplicationException(status);
         }
+    }
+
+    public static Response ok(HALRepresentation representation) {
+        return Response.ok(representation).build();
     }
 }

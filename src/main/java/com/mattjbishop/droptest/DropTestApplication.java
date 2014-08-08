@@ -1,8 +1,5 @@
 package com.mattjbishop.droptest;
 
-import java.net.UnknownHostException;
-
-import com.mattjbishop.droptest.core.Status;
 import io.dropwizard.Application;
 import io.dropwizard.views.ViewBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -10,12 +7,10 @@ import io.dropwizard.setup.Environment;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import org.mongojack.JacksonDBCollection;
 import com.mattjbishop.droptest.resources.DropTestResource;
 import com.mattjbishop.droptest.resources.PeopleResource;
 import com.mattjbishop.droptest.resources.PersonResource;
 import com.mattjbishop.droptest.core.MongoManaged;
-import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.health.MongoHealthCheck;
 import com.mattjbishop.droptest.health.TemplateHealthCheck;
 
@@ -26,7 +21,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 
     @Override
     public String getName() {
-        return "hello-world";
+        return "droptest";
     }
 
     @Override
@@ -52,17 +47,11 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		MongoClientURI uri = new MongoClientURI(configuration.getMongoUri());
 		MongoClient mongo = new MongoClient(uri);
 		DB db = mongo.getDB(uri.getDatabase());
-		
-		JacksonDBCollection<Person, String> people = 
-			JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);
 
-        JacksonDBCollection<Status, String> statuses =
-                JacksonDBCollection.wrap(db.getCollection("status"), Status.class, String.class);
-			
-		MongoManaged mongoManaged = new MongoManaged(mongo);
+        MongoManaged mongoManaged = new MongoManaged(mongo);
 
-		final PeopleResource peopleResource = new PeopleResource(people);
-		final PersonResource personResource = new PersonResource(people, statuses);
+		final PeopleResource peopleResource = new PeopleResource(db);
+		final PersonResource personResource = new PersonResource(db);
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);
