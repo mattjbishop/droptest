@@ -14,20 +14,27 @@ import com.mongodb.DB;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBCursor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
 
 @Path("/people/{personId}")
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
-	
+
+    @Context
+    private UriInfo uriInfo;
+
 	private JacksonDBCollection<Person, String> people;
     private JacksonDBCollection<Status, String> statuses;
 
@@ -39,11 +46,13 @@ public class PersonResource {
 	
 	@GET
     @Timed
-    @JsonView(Views.HAL.class)
+    @JsonView(Views.HAL.class) // this uses the jackson JAX-RS features to automagically add in the json view
 	public Response getPerson(@PathParam("personId") String personId) {
 
         PersonRepresentation person = findPerson(personId);
-        HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person);
+
+        // need to get the context and pass it to the factory - is there some way of injecting it?
+        HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
 
         return Response.ok(representation).build();
     }
@@ -67,7 +76,6 @@ public class PersonResource {
 
         if (sCursor != null) {
             while (sCursor.hasNext()) {
-                // the event and person id needs to be converted to a HATEOAS link
                 personStatuses.add(sCursor.next());
             }
         }

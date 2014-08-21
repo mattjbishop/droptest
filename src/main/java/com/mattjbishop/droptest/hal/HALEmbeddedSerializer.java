@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by matt on 07/08/2014.
  *
- * CAN BE DELETED??
+ * serializes embedded resources
  */
 public class HALEmbeddedSerializer
        extends JsonSerializer<Map<String, List<HALRepresentation>>> {
@@ -33,6 +33,9 @@ public class HALEmbeddedSerializer
 
         jgen.writeStartObject();
         jgen.writeObjectField("embedded", "bar");
+
+        // cycle through
+
         jgen.writeEndObject();
     }
 

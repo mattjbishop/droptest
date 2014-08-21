@@ -1,6 +1,7 @@
 package com.mattjbishop.droptest.hal;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -12,19 +13,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * lightweight representation, serialised by Jackson to JSON.
+ */
 @JsonPropertyOrder({"_links"})
-// @JsonInclude(JsonInclude.Include.NON_NULL)
+// @JsonInclude(JsonInclude.Include.NON_NULL) // !!!
 public class HALRepresentation {
 
-    // custom serializer here
     @JsonSerialize(using = HALLinkSerializer.class)
-    private List<Link> _links;
+    @JsonProperty("_links")
+    private Map<String, List<Link>> _links;
+   //  private List<Link> _links;
+
+    // namespaces
 
     @JsonSerialize(using = HALEmbeddedSerializer.class)
+    @JsonProperty("_embedded")
     private Map<String, List<HALRepresentation>> _embedded;
 
-    // need to filter this to make sure that no links are serialised unless we want them to be.
-    // filter out anything marked as embedded - and then
     @JsonUnwrapped
     private Object resource = null;
 
@@ -37,11 +43,19 @@ public class HALRepresentation {
     }
 
     public void addLink(Link link) {
-        // lazy loading of _links
         if (_links == null) {
-            _links = new ArrayList<Link>();
+            _links = new HashMap<String, List<Link>>();
         }
-        _links.add(link);
+
+        List<Link> linksForName = _links.get(link.getName());
+
+        if (linksForName == null)
+        {
+            linksForName = new ArrayList<Link>();
+            _links.put(link.getName(), linksForName);
+        }
+
+        linksForName.add(link);
     }
 
     public void addEmbedded(String key, HALRepresentation resource) {

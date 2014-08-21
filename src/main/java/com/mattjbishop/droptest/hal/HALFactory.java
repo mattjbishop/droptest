@@ -3,6 +3,7 @@ package com.mattjbishop.droptest.hal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -19,7 +20,7 @@ public class HALFactory {
 
     public static HALFactory getFactory() {
         if (null == factoryInstance) {
-            factoryInstance = new HALFactory();
+            factoryInstance = new HALFactory(); // not thread safe !!!
             logger.info("factory created");
         }
 
@@ -28,11 +29,13 @@ public class HALFactory {
 
     // factory methods here
 
-    public HALRepresentation getHALRepresentation(Object resource) {
+    public HALRepresentation getHALRepresentation(Object resource, UriInfo uriInfo) {
         logger.info("creating a new representation");
 
+        // this needs to get the context and pass it on to the composer
+
         HALRepresentation representation = new HALRepresentation();
-        HALComposer composer = new HALComposer(); // !!! this should be injected
+        HALComposer composer = new HALComposer(uriInfo); // !!! this should be injected
 
         composer.compose(resource,representation);
 
@@ -40,5 +43,4 @@ public class HALFactory {
 
         return representation;
     }
-
 }

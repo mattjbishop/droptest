@@ -3,6 +3,9 @@ package com.mattjbishop.droptest.hal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
+
 import static com.google.common.base.Preconditions.*;
 import java.lang.reflect.Field;
 
@@ -15,11 +18,16 @@ public class HALComposer {
 
     final static Logger logger = LoggerFactory.getLogger(HALFactory.class);
 
+    private UriInfo uriInfo;
+
+    public HALComposer(UriInfo uriInfo) {
+        this.uriInfo = uriInfo;
+    }
 
     protected void compose(Object from, HALRepresentation to) {
         logger.info("composing");
 
-        to.setResource(from); // give the representation the base resource
+        to.setResource(from); // give the representation the resource
 
         Field[] fields = HALReflectionHelper.getDeclaredFields(from.getClass());
 
@@ -57,6 +65,12 @@ public class HALComposer {
         // if a link, add it
         if (HALReflectionHelper.isLink(field)) {
             logger.info("{} is a link", field.getName());
+            logger.info("uri is {}", uriInfo.getRequestUri().toASCIIString());
+
+            Link link = new Link(); // !!!
+            link.setName(field.getName());
+            link.setHref(uriInfo.getRequestUri().toASCIIString());
+            to.addLink(link);
         }
 
         // if an embedded resource, add it

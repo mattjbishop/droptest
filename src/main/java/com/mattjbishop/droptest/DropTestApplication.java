@@ -28,6 +28,8 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
     public void initialize(Bootstrap<DropTestConfiguration> bootstrap) {
         bootstrap.addBundle(new ViewBundle());
         // bootstrap.addBundle(new AssetsBundle("/app/", "/"));  // !!! need to add in the angular app //
+
+        // add in any default links to the HALFactory
     }
 
 	// !!! need to understand how Dropwizard handles exceptions... throws Exception is a blunt tool...
