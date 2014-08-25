@@ -1,5 +1,6 @@
 package com.mattjbishop.droptest;
 
+import com.mattjbishop.droptest.resources.StatusResource;
 import io.dropwizard.Application;
 import io.dropwizard.views.ViewBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -54,6 +55,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 
 		final PeopleResource peopleResource = new PeopleResource(db);
 		final PersonResource personResource = new PersonResource(db);
+        final StatusResource statusResource = new StatusResource(db);
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);
@@ -64,6 +66,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		environment.jersey().register(resource);
 		environment.jersey().register(peopleResource);
 		environment.jersey().register(personResource);
+        environment.jersey().register(statusResource);
 		environment.lifecycle().manage(mongoManaged);
     }
 }

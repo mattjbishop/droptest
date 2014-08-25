@@ -1,11 +1,13 @@
 package com.mattjbishop.droptest.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Created by matt on 01/08/2014.
  */
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+// @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum StatusType {
     CONVICTED(1, "Convicted"),
     DISQUALIFIED(2, "Disqualified"),
@@ -24,4 +26,22 @@ public enum StatusType {
         this.id = id;
         this.name = name;
     }
+
+    /*@Override
+    public String toString() {
+        return name;
+    }
+
+    @JsonCreator
+    public static StatusType create(String value) {
+        if(value == null) {
+            throw new IllegalArgumentException();
+        }
+        for(StatusType v : values()) {
+            if(value.equals(v.name())) {
+                return v;
+            }
+        }
+        throw new IllegalArgumentException();
+    }*/
 }

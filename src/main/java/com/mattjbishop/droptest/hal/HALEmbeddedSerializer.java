@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,30 @@ public class HALEmbeddedSerializer
         logger.info("Serializing embedded resource...");
 
         jgen.writeStartObject();
-        jgen.writeObjectField("embedded", "bar");
-
-        // cycle through
-
+        writeOutResources(embeddedResources, jgen);
         jgen.writeEndObject();
     }
 
+    private void writeOutResources(Map<String, List<HALRepresentation>> resources, JsonGenerator jgen)
+            throws IOException, JsonProcessingException {
+        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
+
+            if (entry.getValue().size() == 1) // && !resource.isMultipleLinks(entry.getKey())) // Write single link
+            {
+                HALRepresentation resource = entry.getValue().iterator().next();
+                jgen.writeObjectField(entry.getKey(), resource);
+            }
+            else // write resource collection
+            {
+                jgen.writeArrayFieldStart(entry.getKey());
+
+                for (HALRepresentation resource : entry.getValue())
+                {
+                    jgen.writeObject(resource);
+                }
+
+                jgen.writeEndArray();
+            }
+        }
+    }
 }

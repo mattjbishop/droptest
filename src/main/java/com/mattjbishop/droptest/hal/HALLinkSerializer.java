@@ -19,10 +19,6 @@ import java.util.Map;
 public class HALLinkSerializer
         extends JsonSerializer<Map<String, List<Link>>> {
 
-    private static final String CURIES = "curies";
-    private static final String EMBEDDED = "_embedded";
-    private static final String LINKS = "_links";
-
     final static Logger logger = LoggerFactory.getLogger(HALEmbeddedSerializer.class);
 
     public HALLinkSerializer() {
@@ -37,21 +33,14 @@ public class HALLinkSerializer
 
         logger.info("found {} links", links.size());
 
-        // write curies
-
-        // write out links
-
         jgen.writeStartObject();
 
         writeOutLinks(links, jgen);
 
+        // write curies
+
         jgen.writeEndObject();
     }
-
-
-
-
-
 
     private void writeOutLinks(Map<String, List<Link>> links, JsonGenerator jgen)
             throws IOException, JsonProcessingException

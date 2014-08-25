@@ -4,7 +4,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.mattjbishop.droptest.hal.HALRepresentation;
 import org.mongojack.DBCursor;
 
 
@@ -37,7 +36,8 @@ public class ResourceHelper {
         }
     }
 
-    public static Response ok(HALRepresentation representation) {
+    public static Response ok(Object representation) {
         return Response.ok(representation).build();
     }
+
 }

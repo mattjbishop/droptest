@@ -15,12 +15,20 @@ public class HALFactory {
     private static HALFactory factoryInstance;
     final static Logger logger = LoggerFactory.getLogger(HALFactory.class);
 
+    // any default links
+
+    // paths for self links
+    //// http://stackoverflow.com/questions/13484350/find-a-list-of-all-jersey-resource-methods-in-my-app
+    //// 
+
+
     private HALFactory() {
     }
 
     public static HALFactory getFactory() {
         if (null == factoryInstance) {
             factoryInstance = new HALFactory(); // not thread safe !!!
+
             logger.info("factory created");
         }
 
@@ -31,16 +39,21 @@ public class HALFactory {
 
     public HALRepresentation getHALRepresentation(Object resource, UriInfo uriInfo) {
         logger.info("creating a new representation");
-
-        // this needs to get the context and pass it on to the composer
+        logger.info("baseuri is {}", uriInfo.getBaseUri());
 
         HALRepresentation representation = new HALRepresentation();
-        HALComposer composer = new HALComposer(uriInfo); // !!! this should be injected
+        HALComposer composer = new HALComposer(); // !!! this should be injected
 
         composer.compose(resource,representation);
 
-        // build any default links
+        representation.setSelfLink(uriInfo.getRequestUri().toASCIIString());
+
+        // add in any other global links, namespaces, etc
+
+        // go through each of the links and update with the base path??
 
         return representation;
     }
+
+
 }

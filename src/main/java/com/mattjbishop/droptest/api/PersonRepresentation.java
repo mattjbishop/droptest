@@ -7,23 +7,22 @@ import com.mattjbishop.droptest.core.Representation;
 import com.mattjbishop.droptest.core.Status;
 import com.mattjbishop.droptest.hal.annotations.HALEmbedded;
 import com.mattjbishop.droptest.hal.annotations.HALLink;
+import com.mattjbishop.droptest.hal.annotations.HALResource;
 
 import java.util.List;
 
 /**
  * Created by matt on 01/08/2014.
- *
- * Use HALBuilder to go from resource to representation...
- * !!! does this need to implement some form of HALResource interface??
- *
  */
 public class PersonRepresentation implements Representation {
 
     @HALLink
-    private String _self;
+    private String self;
 
-    // Person - unwrapped needs to be here for the custom serializer to work properly!
-    @JsonUnwrapped
+    @HALLink(href = "/foo", title = "foo")
+    private String foo;
+
+    @HALResource
     private Person person;
 
     // status objects

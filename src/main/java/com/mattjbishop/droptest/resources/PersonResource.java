@@ -51,8 +51,12 @@ public class PersonResource {
 
         PersonRepresentation person = findPerson(personId);
 
-        // need to get the context and pass it to the factory - is there some way of injecting it?
+        // can the context be injected?
         HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
+
+        // this is the proper place to fix any HATEOAS links !!!
+
+        // add in any resource/response specific links,namespaces,etc here
 
         return Response.ok(representation).build();
     }
@@ -68,7 +72,7 @@ public class PersonResource {
 
     private PersonRepresentation findPerson(String personId) {
         List<Status> personStatuses = new ArrayList<>();
-        DBCursor<Person> pCursor = people.find(DBQuery.is("name", personId));
+        DBCursor<Person> pCursor = people.find(DBQuery.is("_id", personId));
         ResourceHelper.notFoundIfNull(pCursor);
 
         // get the status objects and add to the PersonStatus

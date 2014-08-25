@@ -84,4 +84,20 @@ public class HALReflectionHelper {
     {
         return type.getDeclaredFields();
     }
+
+    public static Link getLink(Field f) {
+
+        Link link = null;
+
+        if (isLink(f)) {
+            link = new Link();
+            HALLink annotation = f.getAnnotation(HALLink.class);
+
+            link.setName(f.getName());
+            link.setHref(annotation.href());
+            link.setTitle(annotation.title());
+        }
+
+        return link;
+    }
 }

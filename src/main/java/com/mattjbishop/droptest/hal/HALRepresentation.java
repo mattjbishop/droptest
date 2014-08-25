@@ -1,9 +1,6 @@
 package com.mattjbishop.droptest.hal;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import static com.google.common.base.Preconditions.*;
@@ -17,13 +14,12 @@ import java.util.Map;
  * lightweight representation, serialised by Jackson to JSON.
  */
 @JsonPropertyOrder({"_links"})
-// @JsonInclude(JsonInclude.Include.NON_NULL) // !!!
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HALRepresentation {
 
     @JsonSerialize(using = HALLinkSerializer.class)
     @JsonProperty("_links")
     private Map<String, List<Link>> _links;
-   //  private List<Link> _links;
 
     // namespaces
 
@@ -43,6 +39,10 @@ public class HALRepresentation {
     }
 
     public void addLink(Link link) {
+        addLink(link, false);
+    }
+
+    public void addLink(Link link, boolean isSingleLink) {
         if (_links == null) {
             _links = new HashMap<String, List<Link>>();
         }
@@ -53,6 +53,8 @@ public class HALRepresentation {
         {
             linksForName = new ArrayList<Link>();
             _links.put(link.getName(), linksForName);
+        } else if (isSingleLink) {
+            linksForName.clear();
         }
 
         linksForName.add(link);
@@ -71,22 +73,30 @@ public class HALRepresentation {
 
     }
 
-    /*public Resource addResource(String rel, Resource resource, boolean isMultiple)
+    public void setSelfLink(String uri) {
+
+        checkNotNull(uri, "Cannot set the self link to be null");
+
+        Link self = new Link();
+        self.setName("self");
+        self.setHref(uri);
+
+        addLink(self, true);
+    }
+
+    @JsonIgnore
+    public Link getSelfLink()
     {
-        if (rel == null) throw new ResourceException("Cannot embed resource using null 'rel'");
-        if (resource == null) throw new ResourceException("Cannot embed null resource");
-
-        List<Resource> forRel = acquireResourcesForRel(rel);
-        forRel.add(resource);
-
-        if (isMultiple)
-        {
-            arrayResourceRels.add(rel);
+        if (_links == null) {
+            _links = new HashMap<String, List<Link>>();
         }
 
-        return this;
-    }*/
+        List<Link> linksForName = _links.get("self");
 
+        checkNotNull(linksForName);
+
+        return linksForName.iterator().next();
+    }
 
     private List<HALRepresentation> acquireResourcesForRel(String rel)
     {
