@@ -21,12 +21,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.net.URI;
 
 @Path("/people/{personId}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,9 +54,46 @@ public class PersonResource {
         // can the context be injected?
         HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
 
-        // this is the proper place to fix any HATEOAS links !!!
+        // is this the proper place to fix any HATEOAS links?? !!!
 
         // add in any resource/response specific links,namespaces,etc here
+       /* UriBuilder builder = HALFactory.getFactory().getSelfBuilder(person.getClass());
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("hostname", "foo");
+        map.put("personId", person.getPerson().getId());
+
+        URI uri = builder.buildFromMap(map);*/
+
+        UriBuilder builder = uriInfo.getBaseUriBuilder();
+
+        builder.path(PersonResource.class);
+        URI uri = builder.build(person.getPerson().getId());
+
+        representation.setSelfLink(uri.toString());
+
+        Map<String, List<HALRepresentation>> resources = representation.getEmbedded();
+
+        builder = uriInfo.getBaseUriBuilder();
+        builder.path(StatusResource.class);
+
+
+        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
+
+            for (HALRepresentation resource : entry.getValue())
+            {
+                UriBuilder resourceBuilder = builder.clone();
+
+                // need to be able to get data from the resource - interface? Representable?
+                uri = builder.build();
+
+
+                //resource.getResource().
+            }
+
+
+        }
+
 
         return Response.ok(representation).build();
     }

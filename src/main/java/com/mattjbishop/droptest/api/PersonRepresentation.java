@@ -1,9 +1,7 @@
 package com.mattjbishop.droptest.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.mattjbishop.droptest.core.Person;
-import com.mattjbishop.droptest.core.Representation;
 import com.mattjbishop.droptest.core.Status;
 import com.mattjbishop.droptest.hal.annotations.HALEmbedded;
 import com.mattjbishop.droptest.hal.annotations.HALLink;
@@ -14,7 +12,7 @@ import java.util.List;
 /**
  * Created by matt on 01/08/2014.
  */
-public class PersonRepresentation implements Representation {
+public class PersonRepresentation {
 
     @HALLink
     private String self;

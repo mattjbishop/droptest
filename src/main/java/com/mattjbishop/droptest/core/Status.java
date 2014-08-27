@@ -30,11 +30,9 @@ public class Status {
     @JsonProperty("reason")
     private String reason;
 
-
     public String getId() {
         return id;
     }
-
 
     public void setId(String id) {
         this.id = id;

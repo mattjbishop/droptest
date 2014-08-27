@@ -1,5 +1,9 @@
 package com.mattjbishop.droptest;
 
+import com.mattjbishop.droptest.api.PersonRepresentation;
+import com.mattjbishop.droptest.core.Person;
+import com.mattjbishop.droptest.core.Status;
+import com.mattjbishop.droptest.hal.HALFactory;
 import com.mattjbishop.droptest.resources.StatusResource;
 import io.dropwizard.Application;
 import io.dropwizard.views.ViewBundle;
@@ -41,8 +45,8 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 			configuration.getTemplate(),
 			configuration.getDefaultName()
 		);
-		
-		
+
+
 		final TemplateHealthCheck healthCheck =
 		        new TemplateHealthCheck(configuration.getTemplate());
 		
@@ -56,6 +60,12 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		final PeopleResource peopleResource = new PeopleResource(db);
 		final PersonResource personResource = new PersonResource(db);
         final StatusResource statusResource = new StatusResource(db);
+
+        // setup the HAL self links
+        HALFactory halFactory = HALFactory.getFactory();
+        halFactory.register(Person.class, PersonResource.class);
+        halFactory.register(PersonRepresentation.class, PersonResource.class);
+        halFactory.register(Status.class, StatusResource.class);
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);

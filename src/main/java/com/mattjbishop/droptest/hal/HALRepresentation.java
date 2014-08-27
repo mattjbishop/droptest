@@ -3,7 +3,7 @@ package com.mattjbishop.droptest.hal;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,6 +71,11 @@ public class HALRepresentation {
         List<HALRepresentation> forRel = acquireResourcesForRel(key);
         forRel.add(resource);
 
+    }
+
+    @JsonIgnore
+    public Map<String, List<HALRepresentation>> getEmbedded() {
+        return _embedded;
     }
 
     public void setSelfLink(String uri) {
