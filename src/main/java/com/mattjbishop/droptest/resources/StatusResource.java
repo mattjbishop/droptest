@@ -1,16 +1,17 @@
 package com.mattjbishop.droptest.resources;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.mattjbishop.droptest.core.Status;
+import com.mattjbishop.droptest.hal.Views;
+import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mongodb.DB;
 import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
 
 import javax.validation.Valid;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -25,6 +26,16 @@ public class StatusResource {
 
     public StatusResource(DB db) {
         this.status = JacksonDBCollection.wrap(db.getCollection("status"), Status.class, String.class);
+    }
+
+    @Path("{id}")
+    @GET
+    @Timed
+    public Response getStatus(@PathParam("id") String id) {
+        DBCursor<Status> cursor = status.find(DBQuery.is("_id", id));
+        ResourceHelper.notFoundIfNull(cursor);
+
+        return Response.ok(cursor.next()).build();
     }
 
     @POST

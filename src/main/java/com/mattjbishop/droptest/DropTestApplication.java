@@ -61,7 +61,7 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		final PersonResource personResource = new PersonResource(db);
         final StatusResource statusResource = new StatusResource(db);
 
-        // setup the HAL self links
+        // setup the HAL self links - this needs to change !!!
         HALFactory halFactory = HALFactory.getFactory();
         halFactory.register(Person.class, PersonResource.class);
         halFactory.register(PersonRepresentation.class, PersonResource.class);

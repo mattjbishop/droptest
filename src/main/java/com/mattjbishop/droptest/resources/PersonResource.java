@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.hal.HALFactory;
-import com.mattjbishop.droptest.hal.HALRepresentation;
-import com.mattjbishop.droptest.hal.Views;
+import com.mattjbishop.droptest.hal.*;
 import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mattjbishop.droptest.views.PersonView;
 import com.codahale.metrics.annotation.Timed;
@@ -32,6 +30,8 @@ import java.net.URI;
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
 
+    final static Logger logger = LoggerFactory.getLogger(PersonResource.class);
+
     @Context
     private UriInfo uriInfo;
 
@@ -51,49 +51,60 @@ public class PersonResource {
 
         PersonRepresentation person = findPerson(personId);
 
-        // can the context be injected?
+        // no need to pass in the uriInfo here !!!
         HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
 
-        // is this the proper place to fix any HATEOAS links?? !!!
+       /* UriBuilder builder = HALFactory.getFactory().getSelfBuilder(person.getClass()); */
 
-        // add in any resource/response specific links,namespaces,etc here
-       /* UriBuilder builder = HALFactory.getFactory().getSelfBuilder(person.getClass());
+        UriBuilder templateBuilder = UriBuilder.fromResource(PersonResource.class); // this can be pre-built !!!
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("hostname", "foo");
-        map.put("personId", person.getPerson().getId());
-
-        URI uri = builder.buildFromMap(map);*/
-
+        // this should be in setSelfLink - look up the template using the resource class...
         UriBuilder builder = uriInfo.getBaseUriBuilder();
+        builder.path(templateBuilder.build(person.getPerson().getId()).toString()); // this should use the representation.resource.id
+        // ... end
 
-        builder.path(PersonResource.class);
-        URI uri = builder.build(person.getPerson().getId());
+        representation.setSelfLink(builder.build().toASCIIString());
 
-        representation.setSelfLink(uri.toString());
-
+        // this should all be in the resource setSelfLink ...
         Map<String, List<HALRepresentation>> resources = representation.getEmbedded();
 
+        templateBuilder = UriBuilder.fromResource(StatusResource.class);
+        logger.info("testBuilder {}", templateBuilder.build().toASCIIString());
+
+        templateBuilder.path(StatusResource.class, "getStatus");
+        logger.info("testBuilder {}", templateBuilder.build().toASCIIString());
+
         builder = uriInfo.getBaseUriBuilder();
-        builder.path(StatusResource.class);
 
-
-        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
-
+        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet())
+        {
             for (HALRepresentation resource : entry.getValue())
             {
-                UriBuilder resourceBuilder = builder.clone();
+                if (resource.getResource() instanceof SelfBuilder)
+                {
+                    logger.info("building a builder for {}", resource.getResource().getClass());
+                    String id = ((SelfBuilder) resource.getResource()).getId();
 
-                // need to be able to get data from the resource - interface? Representable?
-                uri = builder.build();
+                    UriBuilder baseBuilder = builder.clone();
+                    UriBuilder resourceBuilder = templateBuilder.clone();
 
+                    URI uri = resourceBuilder.build(id);
 
-                //resource.getResource().
+                    baseBuilder.path(uri.toString());
+
+                    Link link = new Link();
+                    link.setHref(baseBuilder.build().toASCIIString());
+                    link.setName(entry.getKey());
+
+                    resource.setSelfLink(link.getHref());
+
+                    representation.addLink(link);
+                }
             }
-
-
         }
+        // ... end
 
+        // add in any resource/response specific links,namespaces,etc here
 
         return Response.ok(representation).build();
     }

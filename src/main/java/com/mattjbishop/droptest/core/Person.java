@@ -2,6 +2,7 @@ package com.mattjbishop.droptest.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mattjbishop.droptest.hal.SelfBuilder;
 import com.mattjbishop.droptest.hal.annotations.HALLink;
 import org.mongojack.ObjectId;
 
@@ -10,7 +11,7 @@ import org.mongojack.ObjectId;
  * Ignoring properties (for the status stuff in the DB) while moving to status resource
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Person {
+public class Person implements SelfBuilder {
     @ObjectId
     @JsonProperty("_id")
 	private String id;
