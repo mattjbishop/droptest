@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,8 +52,7 @@ public class HALFactory {
 
         composer.compose(resource,representation);
 
-        // set links
-        // setLinks(representation, uriInfo);
+        setLinks(representation, uriInfo);
 
         // add in any other global links, namespaces, etc
 
@@ -61,7 +61,7 @@ public class HALFactory {
         return representation;
     }
 
-    public void register(Class resourceObject, Class resource) {
+    public void register(Class resourceObject, UriBuilder templateBuilder) {
 
         if (selfBuilders == null) {
             selfBuilders = new HashMap<String, UriBuilder>();
@@ -71,9 +71,9 @@ public class HALFactory {
             // throw an exception?
         }
 
-        UriBuilder builder = UriBuilder.fromResource(resource);
-        selfBuilders.put(resourceObject.getName(), builder);
-        builder.host("{hostname}");
+       // UriBuilder templateBuilder = UriBuilder.fromResource(resource);
+        selfBuilders.put(resourceObject.getName(), templateBuilder);
+        // builder.host("{hostname}");
 
         logger.info("creating uribuilder");
     }
@@ -88,17 +88,44 @@ public class HALFactory {
 
     private void setLinks(HALRepresentation representation, UriInfo uriInfo) {
 
-        // representation.setSelfLink(uriInfo.getRequestUri().toASCIIString());
+        UriBuilder baseUri = uriInfo.getBaseUriBuilder();
+        setLink(representation, baseUri);
 
-        logger.info("going to get a link for {}", representation.getResource().getClass());
+        Map<String, List<HALRepresentation>> resources = representation.getEmbedded();
 
-        UriBuilder builder = getSelfBuilder(representation.getResource().getClass());
+        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
+            for (HALRepresentation resource : entry.getValue()) {
+                String resourceUri = setLink(resource, baseUri);
 
-        // cycle through the representation and any embedded objects and build the self links
+                Link link = new Link();
+                link.setHref(resourceUri);
+                link.setName(entry.getKey());
+                representation.addLink(link);
+            }
+        }
+    }
 
-        URI uri = builder.build();
-        logger.info("building uri {}", uri.toString());
+    private String setLink(HALRepresentation representation, UriBuilder baseUri) {
+        String link = null;
+        Object resource = representation.getResource();
+        checkNotNull(resource);
 
+        if (resource instanceof SelfBuilder)
+        {
+            String id = ((SelfBuilder) resource).getId();
+            UriBuilder templateBuilder = HALFactory.getFactory().getSelfBuilder(resource.getClass());
+
+            UriBuilder builder = baseUri.clone();
+
+            builder.path(templateBuilder.build(id).toString());
+
+            link = builder.build().toASCIIString();
+            representation.setSelfLink(link);
+
+            logger.info("adding self link: {}", link);
+        }
+
+        return link;
     }
 
 }

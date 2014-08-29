@@ -51,58 +51,7 @@ public class PersonResource {
 
         PersonRepresentation person = findPerson(personId);
 
-        // no need to pass in the uriInfo here !!!
         HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
-
-       /* UriBuilder builder = HALFactory.getFactory().getSelfBuilder(person.getClass()); */
-
-        UriBuilder templateBuilder = UriBuilder.fromResource(PersonResource.class); // this can be pre-built !!!
-
-        // this should be in setSelfLink - look up the template using the resource class...
-        UriBuilder builder = uriInfo.getBaseUriBuilder();
-        builder.path(templateBuilder.build(person.getPerson().getId()).toString()); // this should use the representation.resource.id
-        // ... end
-
-        representation.setSelfLink(builder.build().toASCIIString());
-
-        // this should all be in the resource setSelfLink ...
-        Map<String, List<HALRepresentation>> resources = representation.getEmbedded();
-
-        templateBuilder = UriBuilder.fromResource(StatusResource.class);
-        logger.info("testBuilder {}", templateBuilder.build().toASCIIString());
-
-        templateBuilder.path(StatusResource.class, "getStatus");
-        logger.info("testBuilder {}", templateBuilder.build().toASCIIString());
-
-        builder = uriInfo.getBaseUriBuilder();
-
-        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet())
-        {
-            for (HALRepresentation resource : entry.getValue())
-            {
-                if (resource.getResource() instanceof SelfBuilder)
-                {
-                    logger.info("building a builder for {}", resource.getResource().getClass());
-                    String id = ((SelfBuilder) resource.getResource()).getId();
-
-                    UriBuilder baseBuilder = builder.clone();
-                    UriBuilder resourceBuilder = templateBuilder.clone();
-
-                    URI uri = resourceBuilder.build(id);
-
-                    baseBuilder.path(uri.toString());
-
-                    Link link = new Link();
-                    link.setHref(baseBuilder.build().toASCIIString());
-                    link.setName(entry.getKey());
-
-                    resource.setSelfLink(link.getHref());
-
-                    representation.addLink(link);
-                }
-            }
-        }
-        // ... end
 
         // add in any resource/response specific links,namespaces,etc here
 

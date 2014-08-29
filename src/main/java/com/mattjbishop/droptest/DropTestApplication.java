@@ -19,6 +19,8 @@ import com.mattjbishop.droptest.core.MongoManaged;
 import com.mattjbishop.droptest.health.MongoHealthCheck;
 import com.mattjbishop.droptest.health.TemplateHealthCheck;
 
+import javax.ws.rs.core.UriBuilder;
+
 public class DropTestApplication extends Application<DropTestConfiguration> {
     public static void main(String[] args) throws Exception {
         new DropTestApplication().run(args);
@@ -61,11 +63,16 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
 		final PersonResource personResource = new PersonResource(db);
         final StatusResource statusResource = new StatusResource(db);
 
-        // setup the HAL self links - this needs to change !!!
+        // register the template UriBuilders
         HALFactory halFactory = HALFactory.getFactory();
-        halFactory.register(Person.class, PersonResource.class);
-        halFactory.register(PersonRepresentation.class, PersonResource.class);
-        halFactory.register(Status.class, StatusResource.class);
+
+        UriBuilder builder = UriBuilder.fromResource(PersonResource.class);
+        halFactory.register(Person.class, builder);
+        halFactory.register(PersonRepresentation.class, builder);
+
+        builder = UriBuilder.fromResource(StatusResource.class);
+        builder.path(StatusResource.class, "getStatus");
+        halFactory.register(Status.class, builder);
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);

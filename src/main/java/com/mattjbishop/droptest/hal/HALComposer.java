@@ -109,36 +109,6 @@ public class HALComposer {
         to.addEmbedded(name, embeddedResource);
 
         logger.info("resource class is {}", from.getClass().toString());
-
-        // !!! need a way of generating resource self links... some kind of template??
-        // UriBuilder builder = UriBuilder.fromClass(CustomerService.class);
-        // builder.host("{hostname}")
-        // builder.path(CustomerService.class, "getCustomer");
-
-       /* UriBuilder builder = UriBuilder.fromPath("/customers/{id}");
-        builder.scheme("http")
-                .host("{hostname}")
-                .queryParam("param={param}");
-        In this code block, we have defined a URI pattern that looks like this:
-        http://{hostname}/customers/{id}?param={param}
-
-        Since we have template parameters, we need to initialize them with values passed to
-        one of the build arguments to create the final URI. If you want to reuse this builder,
-        you should clone() it before calling a build() method, as the template parameters will
-        be replaced in the internal structure of the object:
-
-        UriBuilder clone = builder.clone();
-        URI uri = clone.build("example.com", "333", "value");*/
-
-
-        // add the link to the resource in the links - name is the field name
-//        Link embeddedLink = embeddedResource.getSelfLink();
-
-//        checkNotNull(embeddedLink, "Cannot find self link for embedded resource");
-
-//        logger.info("embedded link is {}", embeddedLink.getHref());
-
-//        to.addLink(embeddedLink);
     }
 
 }
