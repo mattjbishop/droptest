@@ -107,13 +107,15 @@ public class HALFactory {
 
         Map<String, List<HALRepresentation>> resources = representation.getEmbedded();
 
-        for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
-            for (HALRepresentation resource : entry.getValue()) {
-                String resourceUri = setLink(resource, baseUri);
+        if (resources != null) {
+            for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
+                for (HALRepresentation resource : entry.getValue()) {
+                    String resourceUri = setLink(resource, baseUri);
 
-                Link link = new Link();
-                link.setHref(resourceUri);
-                representation.addLink(entry.getKey(), link);
+                    Link link = new Link();
+                    link.setHref(resourceUri);
+                    representation.addLink(entry.getKey(), link);
+                }
             }
         }
     }

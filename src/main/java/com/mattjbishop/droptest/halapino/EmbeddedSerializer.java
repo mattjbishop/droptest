@@ -39,16 +39,20 @@ public class EmbeddedSerializer
     @Override
     public void serialize(Map<String, List<HALRepresentation>> embeddedResources, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
-        jgen.writeStartObject();
-        writeOutResources(embeddedResources, jgen);
-        jgen.writeEndObject();
+
+        if (embeddedResources != null) {
+            jgen.writeStartObject();
+            writeOutResources(embeddedResources, jgen);
+            jgen.writeEndObject();
+        }
+
     }
 
     private void writeOutResources(Map<String, List<HALRepresentation>> resources, JsonGenerator jgen)
             throws IOException, JsonProcessingException {
         for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
 
-            if (entry.getValue().size() == 1) // Write single link
+            if (entry.getValue().size() == 1) // Write single resource
             {
                 HALRepresentation resource = entry.getValue().iterator().next();
                 jgen.writeObjectField(entry.getKey(), resource);
