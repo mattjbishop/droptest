@@ -1,12 +1,11 @@
 package com.mattjbishop.droptest.api;
 
-
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.hal.SelfBuilder;
-import com.mattjbishop.droptest.hal.annotations.HALEmbedded;
-import com.mattjbishop.droptest.hal.annotations.HALLink;
-import com.mattjbishop.droptest.hal.annotations.HALResource;
+import com.mattjbishop.droptest.halapino.SelfBuilder;
+import com.mattjbishop.droptest.halapino.annotations.HALEmbedded;
+import com.mattjbishop.droptest.halapino.annotations.HALLink;
+import com.mattjbishop.droptest.halapino.annotations.HALResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,16 +20,13 @@ public class PersonRepresentation implements SelfBuilder {
     @HALLink
     private String self;
 
-    @HALLink(href = "/foo", title = "foo")
-    private String foo;
+    @HALLink(title = "foo", curie = "bar")
+    private String foo = "/foo2";
 
     @HALResource
     private Person person;
 
-    // status objects
-    // embedded
-    // "_embedded": { "ea:order": [{obj1}, {obj2}] }
-    @HALEmbedded(name = "status")
+    @HALEmbedded
     @JsonProperty("status")
     private List<Status> statuses;
 

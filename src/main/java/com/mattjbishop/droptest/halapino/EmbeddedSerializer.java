@@ -1,12 +1,24 @@
-package com.mattjbishop.droptest.hal;
+/*
+ * Copyright 2014 Matt Bishop
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.mattjbishop.droptest.halapino;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,21 +29,16 @@ import java.util.Map;
  *
  * serializes embedded resources
  */
-public class HALEmbeddedSerializer
+public class EmbeddedSerializer
        extends JsonSerializer<Map<String, List<HALRepresentation>>> {
 
-    final static Logger logger = LoggerFactory.getLogger(HALEmbeddedSerializer.class);
-
-    public HALEmbeddedSerializer() {
+    public EmbeddedSerializer() {
         super();
     }
 
     @Override
     public void serialize(Map<String, List<HALRepresentation>> embeddedResources, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
-
-        logger.info("Serializing embedded resource...");
-
         jgen.writeStartObject();
         writeOutResources(embeddedResources, jgen);
         jgen.writeEndObject();
@@ -41,7 +48,7 @@ public class HALEmbeddedSerializer
             throws IOException, JsonProcessingException {
         for (Map.Entry<String, List<HALRepresentation>> entry : resources.entrySet()) {
 
-            if (entry.getValue().size() == 1) // && !resource.isMultipleLinks(entry.getKey())) // Write single link
+            if (entry.getValue().size() == 1) // Write single link
             {
                 HALRepresentation resource = entry.getValue().iterator().next();
                 jgen.writeObjectField(entry.getKey(), resource);

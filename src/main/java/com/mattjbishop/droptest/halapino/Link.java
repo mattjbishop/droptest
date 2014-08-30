@@ -1,4 +1,22 @@
-package com.mattjbishop.droptest.hal;
+/*
+ * Copyright 2014 Matt Bishop
+ *
+ * Builds on ideas in hyperexpress HalLink class https://github.com/RestExpress/HyperExpress
+ * Copyright 2013, Strategic Gains, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.mattjbishop.droptest.halapino;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,6 +28,13 @@ import java.util.regex.Pattern;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Link {
+
+    // Regular expression for the hasTemplate() method - from Hyperexpress
+    private static final String TEMPLATE_REGEX = "\\{(\\w*?)\\}";
+    private static final Pattern TEMPLATE_PATTERN = Pattern.compile(TEMPLATE_REGEX);
+
+    private static final String REL_REGEX = "\\{rel\\}";
+    private static final Pattern REL_PATTERN = Pattern.compile(REL_REGEX);
 
 /*  5.1.  href
 
@@ -32,7 +57,8 @@ public class Link {
     Its value SHOULD be considered false if it is undefined or any other
     value than true.*/
 
-    private boolean templated;
+    // deal with this as a String so that Jackson does not serialise it when it is false
+    private String templated;
 
 /*  5.3.  type
 
@@ -66,7 +92,7 @@ public class Link {
     Its value MAY be used as a secondary key for selecting Link Objects
     which share the same relation type.*/
 
-    @JsonIgnore
+
     private String name;
 
 /*  5.6.  profile
@@ -93,8 +119,10 @@ public class Link {
 
     Its value is a string and is intended for indicating the language of
     the target resource (as defined by [RFC5988]).*/
-
     private String hreflang;
+
+    @JsonIgnore
+    private String curie;
 
     public String getHref() {
         return href;
@@ -104,11 +132,11 @@ public class Link {
         this.href = href;
     }
 
-    public boolean isTemplated() {
+    public String getTemplated() {
         return templated;
     }
 
-    public void setTemplated(boolean templated) {
+    public void setTemplated(String templated) {
         this.templated = templated;
     }
 
@@ -159,4 +187,27 @@ public class Link {
     public void setHreflang(String hreflang) {
         this.hreflang = hreflang;
     }
+
+    public String getCurie() {
+        return curie;
+    }
+
+    public void setCurie(String curie) {
+        this.curie = curie;
+    }
+
+    public boolean isTemplated() {
+        return (this.templated != null) && (this.templated == "true");
+    }
+
+    @JsonIgnore
+    public boolean hasTemplate() {
+        return (this.href != null) && TEMPLATE_PATTERN.matcher(this.href).find();
+    }
+
+    @JsonIgnore
+    public boolean hasRelTemplate() {
+        return (this.href != null) && REL_PATTERN.matcher(this.href).find();
+    }
+
 }

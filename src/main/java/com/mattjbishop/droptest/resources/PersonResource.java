@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.hal.*;
+import com.mattjbishop.droptest.halapino.*;
 import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mattjbishop.droptest.views.PersonView;
 import com.codahale.metrics.annotation.Timed;
@@ -12,8 +12,6 @@ import com.mongodb.DB;
 import org.mongojack.JacksonDBCollection;
 import org.mongojack.DBQuery;
 import org.mongojack.DBCursor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,16 +19,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.net.URI;
 
 @Path("/people/{personId}")
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
-
-    final static Logger logger = LoggerFactory.getLogger(PersonResource.class);
 
     @Context
     private UriInfo uriInfo;
@@ -51,7 +44,12 @@ public class PersonResource {
 
         PersonRepresentation person = findPerson(personId);
 
-        HALRepresentation representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
+        HALRepresentation representation = null;
+        try {
+            representation = HALFactory.getFactory().getHALRepresentation(person, uriInfo);
+        } catch (HALException e) {
+            //throw exception that the custom mapper can handle
+        }
 
         // add in any resource/response specific links,namespaces,etc here
 

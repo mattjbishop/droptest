@@ -1,9 +1,7 @@
 package com.mattjbishop.droptest.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.hal.Views;
 import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mongodb.DB;
 import org.mongojack.DBCursor;

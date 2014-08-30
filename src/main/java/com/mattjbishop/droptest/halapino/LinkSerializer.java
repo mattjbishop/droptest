@@ -1,44 +1,44 @@
-package com.mattjbishop.droptest.hal;
+/*
+ * Copyright 2014 Matt Bishop
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.mattjbishop.droptest.halapino;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by matt on 08/08/2014.
  */
-public class HALLinkSerializer
+public class LinkSerializer
         extends JsonSerializer<Map<String, List<Link>>> {
 
-    final static Logger logger = LoggerFactory.getLogger(HALEmbeddedSerializer.class);
-
-    public HALLinkSerializer() {
+    public LinkSerializer() {
         super();
     }
 
     @Override
     public void serialize(Map<String, List<Link>> links, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
-
-        logger.info("Serializing links...");
-
-        logger.info("found {} links", links.size());
-
         jgen.writeStartObject();
-
         writeOutLinks(links, jgen);
-
-        // write curies
-
         jgen.writeEndObject();
     }
 
@@ -47,15 +47,10 @@ public class HALLinkSerializer
     {
         for (Map.Entry<String, List<Link>> entry : links.entrySet())
         {
-            if (entry.getValue().size() == 1) // && !resource.isMultipleLinks(entry.getKey())) // Write single link
+            if (entry.getValue().size() == 1) // Write single link
             {
                 Link link = entry.getValue().iterator().next();
-
-//                if (null == link.getTemplated())
-//                {
-//                    link.setTemplated(link.hasTemplate() ? true : null);
-//                }
-
+                reconcileTemplated(link);
                 jgen.writeObjectField(entry.getKey(), link);
             }
             else // Write link array
@@ -64,11 +59,7 @@ public class HALLinkSerializer
 
                 for (Link link : entry.getValue())
                 {
-//                    if (null == link.getTemplated())
-//                    {
-//                        link.setTemplated(link.hasTemplate() ? true : null);
-//                    }
-
+                    reconcileTemplated(link);
                     jgen.writeObject(link);
                 }
 
@@ -77,6 +68,13 @@ public class HALLinkSerializer
 
         }
 
+    }
+
+    private void reconcileTemplated(Link link) {
+        if (link.isTemplated())
+        {
+            link.setTemplated(link.hasRelTemplate() ? "true" : "false");
+        }
     }
 
 }

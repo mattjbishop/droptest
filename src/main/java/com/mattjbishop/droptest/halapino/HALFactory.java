@@ -1,13 +1,24 @@
-package com.mattjbishop.droptest.hal;
+/*
+ * Copyright 2014 Matt Bishop
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.mattjbishop.droptest.halapino;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +29,11 @@ import java.util.Map;
 public class HALFactory {
 
     private static HALFactory factoryInstance;
-    final static Logger logger = LoggerFactory.getLogger(HALFactory.class);
 
-    // self links
+    // self link templates
     private Map<String, UriBuilder> selfBuilders;
 
-    // paths for self links
-    //// http://stackoverflow.com/questions/13484350/find-a-list-of-all-jersey-resource-methods-in-my-app
-    //// 
-
+    private LinkMap globalLinks;
 
     private HALFactory() {
     }
@@ -34,8 +41,6 @@ public class HALFactory {
     public static HALFactory getFactory() {
         if (null == factoryInstance) {
             factoryInstance = new HALFactory(); // not thread safe !!!
-
-            logger.info("factory created");
         }
 
         return factoryInstance;
@@ -43,20 +48,17 @@ public class HALFactory {
 
     // factory methods here
 
-    public HALRepresentation getHALRepresentation(Object resource, UriInfo uriInfo) {
-        logger.info("creating a new representation");
-        logger.info("baseuri is {}", uriInfo.getBaseUri());
+    public HALRepresentation getHALRepresentation(Object resource, UriInfo uriInfo)
+            throws HALException {
 
         HALRepresentation representation = new HALRepresentation();
-        HALComposer composer = new HALComposer(); // !!! this should be injected
+        Composer composer = new Composer(); // !!! this should be injected
+
+        setGlobalLinks(representation); // what do you do if this is an absolute link?
 
         composer.compose(resource,representation);
 
         setLinks(representation, uriInfo);
-
-        // add in any other global links, namespaces, etc
-
-        // go through each of the links and update with the base path??
 
         return representation;
     }
@@ -71,11 +73,23 @@ public class HALFactory {
             // throw an exception?
         }
 
-       // UriBuilder templateBuilder = UriBuilder.fromResource(resource);
         selfBuilders.put(resourceObject.getName(), templateBuilder);
-        // builder.host("{hostname}");
+    }
 
-        logger.info("creating uribuilder");
+    public void addGlobalLink(String rel, Link link) {
+        if (globalLinks == null) {
+            globalLinks = new LinkMap();
+        }
+
+        globalLinks.addLink(rel, link);
+    }
+
+    public void addCurie(String name, String href) {
+        Link link = new Link();
+        link.setName(name);
+        link.setHref(href);
+        link.setTemplated("true");
+        addGlobalLink("curies", link); // !!! move into HALRepresentation - so that the "curies" string is hidden
     }
 
     public UriBuilder getSelfBuilder(Class resourceObject) {
@@ -99,9 +113,14 @@ public class HALFactory {
 
                 Link link = new Link();
                 link.setHref(resourceUri);
-                link.setName(entry.getKey());
-                representation.addLink(link);
+                representation.addLink(entry.getKey(), link);
             }
+        }
+    }
+
+    private void setGlobalLinks(HALRepresentation representation) {
+        if (globalLinks != null) {
+            representation.addLinks(globalLinks);
         }
     }
 
@@ -121,8 +140,6 @@ public class HALFactory {
 
             link = builder.build().toASCIIString();
             representation.setSelfLink(link);
-
-            logger.info("adding self link: {}", link);
         }
 
         return link;

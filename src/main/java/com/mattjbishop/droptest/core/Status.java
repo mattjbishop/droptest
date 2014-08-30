@@ -1,8 +1,7 @@
 package com.mattjbishop.droptest.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mattjbishop.droptest.hal.SelfBuilder;
-import org.hibernate.validator.constraints.Length;
+import com.mattjbishop.droptest.halapino.SelfBuilder;
 import org.mongojack.ObjectId;
 import java.util.Date;
 

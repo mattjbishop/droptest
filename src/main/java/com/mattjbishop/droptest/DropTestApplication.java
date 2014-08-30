@@ -3,7 +3,7 @@ package com.mattjbishop.droptest;
 import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.hal.HALFactory;
+import com.mattjbishop.droptest.halapino.HALFactory;
 import com.mattjbishop.droptest.resources.StatusResource;
 import io.dropwizard.Application;
 import io.dropwizard.views.ViewBundle;
@@ -73,6 +73,8 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
         builder = UriBuilder.fromResource(StatusResource.class);
         builder.path(StatusResource.class, "getStatus");
         halFactory.register(Status.class, builder);
+
+        halFactory.addCurie("bar", "/bar/{rel}");
 
 		final MongoHealthCheck mongoHealthCheck = 
 			new MongoHealthCheck(mongo);
