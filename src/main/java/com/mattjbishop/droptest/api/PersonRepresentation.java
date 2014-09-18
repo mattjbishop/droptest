@@ -2,10 +2,10 @@ package com.mattjbishop.droptest.api;
 
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.halapino.SelfBuilder;
-import com.mattjbishop.droptest.halapino.annotations.HALEmbedded;
-import com.mattjbishop.droptest.halapino.annotations.HALLink;
-import com.mattjbishop.droptest.halapino.annotations.HALResource;
+import com.mattjbishop.halapino.SelfBuilder;
+import com.mattjbishop.halapino.annotations.HALEmbedded;
+import com.mattjbishop.halapino.annotations.HALLink;
+import com.mattjbishop.halapino.annotations.HALResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import static com.google.common.base.Preconditions.checkNotNull;

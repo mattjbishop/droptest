@@ -2,7 +2,7 @@ package com.mattjbishop.droptest.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mattjbishop.droptest.halapino.SelfBuilder;
+import com.mattjbishop.halapino.SelfBuilder;
 import org.mongojack.ObjectId;
 
 /**

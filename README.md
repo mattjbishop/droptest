@@ -15,6 +15,19 @@ It uses the following:
 * spock (with groovy)
 
 The project includes a ProcFile so that you can run the service using [foreman](https://github.com/ddollar/foreman).
+note: to run using foreman, you need to set an environment variable:
+
+MONGO_URL = mongodb url
+
+##Halapino:
+
+This project is dependent on [halapino](https://github.com/mattjbishop/halapino). At the moment this is placed in a 
+local repository. To make this work, you need to build halapino and then deploy it to a local directory using the following
+command:
+
+```
+mvn deploy:deploy-file -Durl=file:///Users/matt/repo/ -Dfile=target/halapino-0.1.0.jar -DgroupId=com.mattjbishop -DartifactId=halapino -Dpackaging=jar -Dversion=0.1.0
+```
 
 ##To Do:
 

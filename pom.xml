@@ -30,7 +30,23 @@
         </license>
     </licenses>
 
+    <repositories>
+        <!--other repositories if any-->
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/../../repo</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- Halapino -->
+        <dependency>
+            <groupId>com.mattjbishop</groupId>
+            <artifactId>halapino</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
         <!-- Dropwizard -->
 		<dependency>
 			<groupId>io.dropwizard</groupId>

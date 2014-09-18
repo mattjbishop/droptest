@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.mattjbishop.droptest.api.PersonRepresentation;
 import com.mattjbishop.droptest.core.Person;
 import com.mattjbishop.droptest.core.Status;
-import com.mattjbishop.droptest.halapino.*;
+import com.mattjbishop.halapino.*;
 import com.mattjbishop.droptest.utils.ResourceHelper;
 import com.mattjbishop.droptest.views.PersonView;
 import com.codahale.metrics.annotation.Timed;
