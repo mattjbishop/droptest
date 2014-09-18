@@ -70,9 +70,9 @@ public class DropTestApplication extends Application<DropTestConfiguration> {
         halFactory.register(Person.class, builder);
         halFactory.register(PersonRepresentation.class, builder);
 
-        builder = UriBuilder.fromResource(StatusResource.class);
-        builder.path(StatusResource.class, "getStatus");
-        halFactory.register(Status.class, builder);
+       // builder = UriBuilder.fromResource(StatusResource.class);
+       // builder.path(StatusResource.class, "getStatus");
+       // halFactory.register(Status.class, builder);
 
         halFactory.addCurie("bar", "/bar/{rel}");
 

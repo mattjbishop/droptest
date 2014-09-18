@@ -4,7 +4,7 @@
  
     <groupId>com.mattjbishop</groupId>
     <artifactId>droptest</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
  
     <properties>
         <!-- use UTF-8 for everything -->
@@ -33,9 +33,8 @@
     <repositories>
         <!--other repositories if any-->
         <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file:${project.basedir}/../../repo</url>
+            <id>Sonatype SNAPSHOT</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
@@ -44,7 +43,7 @@
         <dependency>
             <groupId>com.mattjbishop</groupId>
             <artifactId>halapino</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 
         <!-- Dropwizard -->

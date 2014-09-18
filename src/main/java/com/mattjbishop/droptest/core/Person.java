@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mattjbishop.halapino.SelfBuilder;
 import org.mongojack.ObjectId;
 
+import java.util.List;
+
 /**
  * Created by Matt.
  * Ignoring properties (for the status stuff in the DB) while moving to status resource
@@ -33,6 +35,8 @@ public class Person implements SelfBuilder {
     @JsonProperty("driverNumber")
 	private String driverNumber;
 
+    @JsonProperty("status")
+    private List<Status> statuses;
 
     public String getId() {
     	return id;
@@ -88,5 +92,13 @@ public class Person implements SelfBuilder {
     
     public void setDriverNumber(String driverNumber) {
     	this.driverNumber = driverNumber;
+    }
+
+    public List<Status> getStatuses() {
+        return statuses;
+    }
+
+    public void setStatuses(List<Status> statuses) {
+        this.statuses = statuses;
     }
 }
