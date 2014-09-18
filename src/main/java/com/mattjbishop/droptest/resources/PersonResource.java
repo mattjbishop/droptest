@@ -29,12 +29,11 @@ public class PersonResource {
     private UriInfo uriInfo;
 
 	private JacksonDBCollection<Person, String> people;
-    private JacksonDBCollection<Status, String> statuses;
+    // private JacksonDBCollection<Status, String> statuses;
 
     public PersonResource(DB db)
     {
         this.people = JacksonDBCollection.wrap(db.getCollection("person"), Person.class, String.class);
-        this.statuses = JacksonDBCollection.wrap(db.getCollection("status"), Status.class, String.class);
     }
 	
 	@GET
@@ -42,7 +41,7 @@ public class PersonResource {
     @JsonView(Views.HAL.class) // this uses the jackson JAX-RS features to automagically add in the json view
 	public Response getPerson(@PathParam("personId") String personId) {
 
-        PersonRepresentation person = findPerson(personId);
+       PersonRepresentation person = findPerson(personId);
 
         HALRepresentation representation = null;
         try {
@@ -66,18 +65,9 @@ public class PersonResource {
     }
 
     private PersonRepresentation findPerson(String personId) {
-        List<Status> personStatuses = new ArrayList<>();
         DBCursor<Person> pCursor = people.find(DBQuery.is("_id", personId));
         ResourceHelper.notFoundIfNull(pCursor);
 
-        // get the status objects and add to the PersonStatus
-        DBCursor<Status> sCursor = statuses.find(DBQuery.is("personId", personId));
-
-        if (sCursor != null) {
-            while (sCursor.hasNext()) {
-                personStatuses.add(sCursor.next());
-            }
-        }
-        return new PersonRepresentation(pCursor.next(), personStatuses);
+        return new PersonRepresentation(pCursor.next());
     }
 }

@@ -26,13 +26,8 @@ public class PersonRepresentation implements SelfBuilder {
     @HALResource
     private Person person;
 
-    @HALEmbedded
-    @JsonProperty("status")
-    private List<Status> statuses;
-
-    public PersonRepresentation(Person person, List<Status> statuses) {
+    public PersonRepresentation(Person person) {
         this.person = person;
-        this.statuses = statuses;
     }
 
     public String getId() {
@@ -46,13 +41,5 @@ public class PersonRepresentation implements SelfBuilder {
 
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    public List<Status> getStatuses() {
-        return statuses;
-    }
-
-    public void setStatuses(List<Status> statuses) {
-        this.statuses = statuses;
     }
 }

@@ -15,9 +15,6 @@ public class Status implements SelfBuilder {
     @JsonProperty("_id")
     private String id;
 
-    @JsonProperty("personId")
-    private String personId;
-
     @JsonProperty("statusType")
     private StatusType statusType;
 
@@ -36,14 +33,6 @@ public class Status implements SelfBuilder {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPersonId() {
-        return personId;
-    }
-
-    public void setPersonId(String personId) {
-        this.personId = personId;
     }
 
     public StatusType getStatusType() {
